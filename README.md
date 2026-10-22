@@ -1,290 +1,295 @@
 # Zabbix Report Center
 
-企业级 Zabbix 监控报表中心，支持自动化数据采集、报表生成和邮件推送。
+**English** | [简体中文](README_zh.md)
 
-## 功能
+---
 
-- 多 Zabbix 实例管理
-- API Token 和用户名密码两种认证方式
-- 定时采集监控数据并生成 Excel 报表
-- 自动发送报表到指定邮箱
-- 基于 Cron 表达式的任务调度
-- 监控信息实时查询
-- 用户权限管理
-- 操作日志审计
-- 敏感信息加密存储
+An enterprise-grade Zabbix monitoring report center featuring automated metric collection, Excel report generation, and scheduled email dispatch.
 
-## 界面预览
+## Features
 
-### 管理员界面
+- **Multi-Instance Management**: Seamlessly manage and switch between multiple Zabbix server instances.
+- **Flexible Authentication**: Supports both modern API Token authentication (Zabbix 5.4+) and classic Username/Password.
+- **Automated Report Generation**: Periodically collects monitoring metrics and compiles them into professional Excel spreadsheets.
+- **Email Delivery**: Automatically sends generated reports to designated recipients via SMTP.
+- **Cron Scheduling**: Built-in task scheduling powered by standard Cron expressions.
+- **Real-Time Inspection**: Live querying and on-demand inspection of hosts, items, and triggers.
+- **Access Control & RBAC**: Role-based user permissions (Administrator and Standard User roles).
+- **Audit Logging**: Comprehensive operation audit logging for security and compliance.
+- **Credential Encryption**: Sensitive credentials (passwords, tokens) are securely encrypted at rest.
 
-![管理员界面](doc/images/admin-dashboard.png)
+## UI Preview
 
-管理员可访问所有功能模块，包括系统管理、用户管理等。
+### Administrator Dashboard
 
-### 普通用户界面
+![Admin Dashboard](doc/images/admin-dashboard.png)
 
-![普通用户界面](doc/images/user-dashboard.png)
+Administrators have full access to all system modules, including system management, user management, and configuration.
 
-普通用户仅可访问监控信息、定时任务和告警信息等业务功能。
+### Standard User Dashboard
 
-## 技术栈
+![User Dashboard](doc/images/user-dashboard.png)
 
-### 后端
-- FastAPI + Uvicorn
-- MySQL / SQLite / PostgreSQL
-- APScheduler
-- Pandas + OpenPyXL
+Standard users have access to essential operational modules such as monitoring information, scheduled tasks, and alert reviews.
 
-### 前端
-- Vue 3 + Composition API
-- TypeScript
-- Element Plus UI 框架
-- Pinia 状态管理
-- Vue Router 路由
-- Axios HTTP 请求
-- Vite 构建工具
+## Tech Stack
 
-## 快速开始
+### Backend
+- **FastAPI** + **Uvicorn**: High-performance asynchronous API framework and ASGI web server.
+- **Databases**: SQLite (default), MySQL, or PostgreSQL.
+- **APScheduler**: Advanced Python task scheduler.
+- **Pandas** + **OpenPyXL**: High-performance data manipulation and Excel report engine.
 
-### 本地部署
+### Frontend
+- **Vue 3** + **Composition API**: Progressive frontend framework.
+- **TypeScript**: Static type safety across the application.
+- **Element Plus**: Comprehensive enterprise UI component library.
+- **Pinia**: Centralized state management.
+- **Vue Router**: Client-side routing.
+- **Axios**: HTTP client for API communication.
+- **Vite**: Next-generation frontend build tooling.
 
-环境要求：Python 3.8+、Node.js 20.19+
+## Quick Start
 
-**后端：**
+### Local Deployment
+
+**Prerequisites:** Python 3.8+, Node.js 20.19+
+
+#### Backend Setup
 
 ```bash
-# 1. 克隆项目
-git clone https://github.com/Fate-Yoke/zabbix-report-center.git
+# 1. Clone the repository
+git clone https://github.com/gurululo/zabbix-report-center.git
 cd zabbix-report-center
 
-# 2. 安装依赖
+# 2. Install Python dependencies
 pip install -r requirements.txt
 
-# 3. 配置环境变量
+# 3. Configure environment variables
 cp .env.example .env
 
-# 生成随机密钥（Linux/Mac）
+# Generate encryption keys (Linux / macOS)
 python -c "import secrets; print('SECRET_KEY=' + secrets.token_urlsafe(32))" >> .env
 python -c "import secrets; print('ENCRYPTION_KEY=' + secrets.token_urlsafe(32))" >> .env
 
-# 或 Windows PowerShell
+# Or using Windows PowerShell
 python -c "import secrets; print('SECRET_KEY=' + secrets.token_urlsafe(32))" | Out-File -Append .env -Encoding utf8
 python -c "import secrets; print('ENCRYPTION_KEY=' + secrets.token_urlsafe(32))" | Out-File -Append .env -Encoding utf8
 
-# 4. 启动后端服务
+# 4. Start the backend service
 python run.py
 ```
 
-**前端：**
+#### Frontend Setup
 
 ```bash
-# 1. 进入前端目录
+# 1. Navigate to the frontend directory
 cd frontend
 
-# 2. 安装依赖
+# 2. Install dependencies
 npm install
 
-# 3. 启动开发服务器
+# 3. Start the development server
 npm run dev
 ```
 
-后端 API 运行在 http://localhost:38204，前端开发服务器运行在 http://localhost:37201
+- **Backend API**: `http://localhost:38204`
+- **Frontend Dev Server**: `http://localhost:37201`
 
-访问 http://localhost:37201 即可使用完整应用。
+Open `http://localhost:37201` in your browser. The first registered account automatically receives Administrator privileges.
 
-### 生产部署
+### Production Build
 
 ```bash
-# 构建前端
+# Build the frontend assets
 cd frontend
 npm run build
 
-# 前端构建产物在 frontend/dist 目录
-# 可使用 Nginx 托管，或由后端服务托管
+# The compiled static assets will be in the frontend/dist directory
+# They can be served via Nginx or hosted directly by the backend service
 ```
 
-### Docker 部署
+### Docker Deployment
 
-环境要求：Docker + Docker Compose
+**Prerequisites:** Docker + Docker Compose
 
-**方式一：使用 Docker Hub 镜像（推荐）**
+#### Option 1: Using Docker Hub Image (Recommended)
 
 ```bash
-# 1. 创建配置文件目录
+# 1. Create a project directory
 mkdir zabbix-report-center && cd zabbix-report-center
 
-# 2. 下载配置文件模板
-curl -O https://raw.githubusercontent.com/Fate-Yoke/zabbix-report-center/main/docker-compose.yml.example
-curl -O https://raw.githubusercontent.com/Fate-Yoke/zabbix-report-center/main/.env.example
+# 2. Download configuration templates
+curl -O https://raw.githubusercontent.com/gurululo/zabbix-report-center/main/docker-compose.yml.example
+curl -O https://raw.githubusercontent.com/gurululo/zabbix-report-center/main/.env.example
 
-# 3. 重命名配置文件
+# 3. Rename configuration files
 mv docker-compose.yml.example docker-compose.yml
 mv .env.example .env
 
-# 4. 编辑 docker-compose.yml，将 build: . 改为：
+# 4. Edit docker-compose.yml and replace "build: ." with:
 # image: yoke68/zabbix-report-center:latest
-# 并根据需要修改端口映射和密码
+# Adjust port mappings and passwords as needed
 
-# 5. 启动服务
+# 5. Start the service
 docker-compose up -d
 ```
 
-**方式二：本地构建镜像**
+#### Option 2: Build Locally
 
 ```bash
-# 1. 克隆项目
-git clone https://github.com/Fate-Yoke/zabbix-report-center.git
+# 1. Clone the repository
+git clone https://github.com/gurululo/zabbix-report-center.git
 cd zabbix-report-center
 
-# 2. 复制并修改配置文件
+# 2. Copy and configure environment files
 cp docker-compose.yml.example docker-compose.yml
 cp .env.example .env
-# 根据实际情况编辑配置文件
+# Edit .env according to your requirements
 
-# 3. 构建并启动
+# 3. Build and launch
 docker-compose up -d --build
 
-# 查看日志
+# View logs
 docker-compose logs -f app
 
-# 停止服务
+# Stop services
 docker-compose down
 
-# 重启服务
+# Restart services
 docker-compose restart
 ```
 
-访问 http://localhost:37201，首次注册的用户自动成为管理员。
+Access `http://localhost:37201` to start using the system.
 
-## 配置
+## Configuration
 
-### 环境变量
+### Environment Variables
 
-在 `.env` 文件中配置：
+Configure key parameters in `.env`:
 
 ```env
-# JWT 密钥
+# JWT signing key
 SECRET_KEY=your-random-secret-key
 
-# 加密密钥（用于 Zabbix 密码、邮件密码等敏感信息加密）
+# Symmetric encryption key for Zabbix / SMTP credentials
 ENCRYPTION_KEY=your-random-encryption-key
 
-# 数据库（可选，默认 SQLite）
+# Database connection URL (optional, defaults to SQLite)
 # DATABASE_URL=mysql+pymysql://user:password@localhost/zabbix_report_center
 
-# 调试模式
+# Debug mode
 DEBUG=false
 ```
 
-生成密钥：
+Generate a secure random key:
 ```bash
 python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
-### Zabbix 配置
+### Zabbix Configuration
 
-在「系统管理 > Zabbix 配置」中添加 Zabbix 服务器，支持 API Token（Zabbix 5.4+）或用户名密码认证。
+Navigate to **System Management > Zabbix Configuration** to register your Zabbix server. Both API Token (Zabbix 5.4+) and Username/Password authentication methods are supported.
 
-### 邮件配置
+### Email Configuration
 
-在「系统管理 > 邮件配置」中设置 SMTP 服务器信息。
+Navigate to **System Management > Email Configuration** to set up SMTP server details for report deliveries.
 
-## 使用
+## Usage
 
-### 创建定时任务
+### Creating Scheduled Tasks
 
-1. 进入「定时任务」页面
-2. 点击「添加任务」
-3. 填写任务信息并保存
+1. Navigate to the **Scheduled Tasks** page.
+2. Click **Add Task**.
+3. Fill in target metrics, frequency, and email recipient details, then save.
 
-Cron 表达式示例：
+**Common Cron Expression Examples:**
+```text
+0 9 * * *      # Every day at 09:00
+0 */6 * * *    # Every 6 hours
+0 9 * * 1      # Every Monday at 09:00
+0 9 1 * *      # 1st day of every month at 09:00
 ```
-0 9 * * *      # 每天 9:00
-0 */6 * * *    # 每 6 小时
-0 9 * * 1      # 每周一 9:00
-0 9 1 * *      # 每月 1 号 9:00
-```
 
-### 监控信息查询
+### Real-Time Metric Queries
 
-在「监控信息」页面可以查询主机、监控项、触发器信息，并导出 Excel。
+Under the **Monitoring Information** section, search and inspect hosts, items, and triggers in real time, and export the current query results to Excel on demand.
 
-## 项目结构
+## Project Structure
 
-```
+```text
 zabbix-report-center/
-├── app/                # 后端应用代码
-│   ├── api/           # API 路由
-│   ├── models/        # 数据模型
-│   ├── schemas/       # Pydantic 模型
-│   ├── services/      # 业务逻辑
-│   └── utils/         # 工具函数
-├── frontend/           # Vue 3 前端项目
+├── app/                # Backend application
+│   ├── api/           # API routes & endpoints
+│   ├── models/        # Database models (SQLAlchemy)
+│   ├── schemas/       # Request & response validation (Pydantic)
+│   ├── services/      # Business logic & services
+│   └── utils/         # Helper functions & encryption
+├── frontend/           # Vue 3 frontend application
 │   ├── src/
-│   │   ├── api/       # API 接口封装
-│   │   ├── components/# 公共组件
-│   │   ├── composables/# 组合式函数
-│   │   ├── router/    # 路由配置
-│   │   ├── stores/    # Pinia 状态管理
-│   │   ├── types/     # TypeScript 类型
-│   │   ├── utils/     # 工具函数
-│   │   └── views/     # 页面组件
-│   └── dist/          # 构建产物
-├── doc/                # 文档
-│   └── images/        # 截图
-├── exports/            # 导出文件
-├── .env.example        # 环境变量模板
-├── Dockerfile          # Docker 镜像配置
-├── docker-compose.yml.example  # Docker Compose 配置模板
-├── requirements.txt    # Python 依赖
-└── run.py             # 启动脚本
+│   │   ├── api/       # API client wrappers
+│   │   ├── components/# Reusable UI components
+│   │   ├── composables/# Vue composables
+│   │   ├── router/    # Route configuration
+│   │   ├── stores/    # Pinia state stores
+│   │   ├── types/     # TypeScript interfaces & types
+│   │   ├── utils/     # Frontend utilities
+│   │   └── views/     # Page views
+│   └── dist/          # Frontend production build output
+├── doc/                # Detailed documentation
+│   └── images/        # UI screenshots
+├── exports/            # Generated export files
+├── .env.example        # Environment variable template
+├── Dockerfile          # Dockerfile for all-in-one container
+├── docker-compose.yml.example  # Docker Compose template
+├── requirements.txt    # Python dependencies
+└── run.py             # Backend launcher script
 ```
 
-## 数据库支持
+## Database Support
 
-| 数据库 | 说明 |
-|--------|------|
-| SQLite | 默认，无需配置 |
-| MySQL | 推荐生产环境使用 |
-| PostgreSQL | 高并发场景推荐 |
+| Database | Description |
+| :--- | :--- |
+| **SQLite** | Default, zero-configuration file database (ideal for trial/small deployments). |
+| **MySQL** | Recommended for production environments. |
+| **PostgreSQL** | Recommended for high-concurrency environments. |
 
-切换数据库只需修改 `DATABASE_URL` 环境变量，表结构自动创建。
+To switch databases, simply set the `DATABASE_URL` environment variable; database tables and schemas will be created automatically on startup.
 
-## 安全
+## Security
 
-- 用户密码使用 Bcrypt 加密
-- Zabbix/邮件密码使用 Fernet 对称加密
-- JWT Token 认证，有效期 24 小时
-- 敏感配置通过环境变量管理
+- **Password Storage**: Passwords are securely hashed with `Bcrypt`.
+- **Sensitive Data at Rest**: Zabbix and SMTP passwords are encrypted using symmetric `Fernet` encryption.
+- **Authentication**: Stateless `JWT` tokens with a 24-hour expiration window.
+- **Configuration Hygiene**: All critical secrets are decoupled and managed via `.env`.
 
-详见 [doc/SECURITY.md](doc/SECURITY.md)
+For further details, refer to [doc/SECURITY.md](doc/SECURITY.md).
 
-## 文档
+## Documentation
 
-- [API 文档](doc/API.md)
-- [部署指南](doc/DEPLOYMENT.md)
-- [开发指南](doc/DEVELOPMENT.md)
-- [安全说明](doc/SECURITY.md)
+- [API Reference](doc/API.md)
+- [Deployment Guide](doc/DEPLOYMENT.md)
+- [Development Guide](doc/DEVELOPMENT.md)
+- [Security Overview](doc/SECURITY.md)
 
-## 常见问题
+## Troubleshooting & FAQ
 
-**无法连接 Zabbix**
-- 检查 URL 和网络连通性
-- 验证认证信息
+**Cannot connect to Zabbix Server**
+- Check the Zabbix API URL and verify network connectivity between the server and Zabbix.
+- Verify that the API Token or account credentials have appropriate read permissions in Zabbix.
 
-**邮件发送失败**
-- 检查 SMTP 配置
-- 确认是否需要 SSL
+**Email delivery fails**
+- Check your SMTP server host, port, and authentication credentials.
+- Verify whether your SMTP provider requires SSL/TLS.
 
-**定时任务未执行**
-- 确认任务已启用
-- 检查 Cron 表达式
+**Scheduled task does not run**
+- Confirm that the task switch is enabled in the dashboard.
+- Double-check the syntax of the configured Cron expression.
 
-**SQLite 数据库锁定**
-- 避免并发任务
-- 或迁移到 MySQL/PostgreSQL
+**SQLite database is locked**
+- Avoid high-frequency concurrent write tasks on SQLite.
+- Migrate to MySQL or PostgreSQL for production multi-worker deployments.
 
-## 许可证
+## License
 
-MIT License
+[MIT License](LICENSE)
